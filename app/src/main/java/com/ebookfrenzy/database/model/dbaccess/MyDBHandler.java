@@ -130,6 +130,28 @@ public class MyDBHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * Updates the product passed to this function.
+     * @param p The product to update
+     * @return True if updated, false otherwise.
+     */
+    public boolean updateProduct(Product p) {
+        boolean result = false;
+        String q = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_ID + " = " + p.getID();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c = db.rawQuery(q, null);
+        if (c.moveToFirst())
+        {
+            String q2 = "UPDATE " + TABLE_PRODUCTS + " SET " + COLUMN_PRODUCTNAME + " = \""
+                    + p.getProductName() + "\", " + COLUMN_QUANTITY + " = " + p.getQuantity()
+                    + " WHERE " + COLUMN_ID + " = " + p.getID();
+            db.execSQL(q2);
+            result = true;
+        }
+        db.close();
+        return result;
+    }
+
+    /**
      * Deletes all records in the product database regardless if the
      * database contains records or not.
      */
