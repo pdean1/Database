@@ -56,4 +56,12 @@ public class DatabaseActivity extends AppCompatActivity {
             idView.setText("No Match Found!");
         }
     }
+
+    public void updateProduct(View v) {
+
+    }
+
+    public void deleteAllProducts(View v) {
+
+    }
 }
