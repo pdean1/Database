@@ -59,7 +59,19 @@ public class DatabaseActivity extends AppCompatActivity {
 
     public void updateProduct(View v) {
         MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
-
+        try {
+            Product p = new Product(Integer.parseInt(idView.getText().toString()),
+                    etName.getText().toString(), Integer.parseInt(etQuantity.getText().toString()));
+            if (dbHandler.updateProduct(p)) {
+                idView.setText("Product updated!");
+            } else {
+                idView.setText("No product found!");
+            }
+        } catch (Exception e) {
+            idView.setText("Find a product first.");
+        }
+        etName.setText("");
+        etQuantity.setText("");
     }
 
     public void deleteAllProducts(View v) {
