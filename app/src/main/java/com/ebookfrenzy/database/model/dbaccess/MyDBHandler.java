@@ -104,6 +104,12 @@ public class MyDBHandler extends SQLiteOpenHelper {
         return p;
     }
 
+    /**
+     * This function delete's a product in TABLE_PRODUCTS based on the ID of the product retrieved
+     * by it's product name.
+     * @param productname The name of the product to delete
+     * @return True if deleted false otherwise.
+     */
     public boolean deleteProduct(String productname) {
         boolean result = false;
         String q = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCTNAME
