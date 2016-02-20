@@ -1,8 +1,12 @@
 package com.ebookfrenzy.database.model.dbaccess;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.ebookfrenzy.database.model.Product;
 
 /**
  * Created by Patrick on 2/20/2016.
@@ -60,5 +64,43 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
         onCreate(db);
+    }
+
+    /**
+     * Adds a product to the database
+     * @param product the product to be added.
+     */
+    public void addProduct(Product product) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PRODUCTNAME, product.getProductName());
+        values.put(COLUMN_QUANTITY, product.getQuantity());
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.insert(TABLE_PRODUCTS, null, values);
+        db.close();
+    }
+
+    /**
+     * Finds a product in the database and returns it to the caller. If this function does not find
+     * a product, then the returned product is null
+     * @param productname Name of the product to find
+     * @return A valid product or a null product
+     */
+    public Product findProduct(String productname) {
+        String query = "Select * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCTNAME +
+                " = \"" + productname + "\"";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        Product p = new Product();
+        if (cursor.moveToFirst()) {
+            cursor.moveToFirst();
+            p.setID(Integer.parseInt(cursor.getString(0)));
+            p.setProductName(cursor.getString(1));
+            p.setQuantity(Integer.parseInt(cursor.getString(2)));
+            cursor.close();
+        } else {
+            p = null;
+        }
+        db.close();
+        return p;
     }
 }
