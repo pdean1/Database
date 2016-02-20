@@ -29,6 +29,7 @@ public class DatabaseActivity extends AppCompatActivity {
         Product p = new Product(etName.getText().toString(),
                 Integer.parseInt(etQuantity.getText().toString()));
         dbHandler.addProduct(p);
+        idView.setText("Record Added!");
         etName.setText("");
         etQuantity.setText("");
     }
