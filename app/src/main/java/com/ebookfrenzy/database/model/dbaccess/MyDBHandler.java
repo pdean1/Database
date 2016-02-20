@@ -128,4 +128,16 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.close();
         return result;
     }
+
+    /**
+     * Deletes all records in the product database regardless if the
+     * database contains records or not.
+     */
+    public void deleteAllProducts()
+    {
+        String q = "DELETE FROM " + TABLE_PRODUCTS;
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(q);
+        db.close();
+    }
 }

@@ -58,10 +58,15 @@ public class DatabaseActivity extends AppCompatActivity {
     }
 
     public void updateProduct(View v) {
+        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
 
     }
 
     public void deleteAllProducts(View v) {
-
+        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
+        dbHandler.deleteAllProducts();
+        idView.setText("All products deleted");
+        etName.setText("");
+        etQuantity.setText("");
     }
 }
