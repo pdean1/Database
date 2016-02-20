@@ -103,4 +103,23 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.close();
         return p;
     }
+
+    public boolean deleteProduct(String productname) {
+        boolean result = false;
+        String q = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCTNAME
+                + " = \"" + productname + "\"";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(q, null);
+        Product p = new Product();
+        if (cursor.moveToFirst()) {
+            cursor.moveToFirst();
+            p.setID(Integer.parseInt(cursor.getString(0)));
+            db.delete(TABLE_PRODUCTS, COLUMN_ID + " = ?",
+                    new String[] { String.valueOf(p.getID())});
+            cursor.close();
+            result = true;
+        }
+        db.close();
+        return result;
+    }
 }
