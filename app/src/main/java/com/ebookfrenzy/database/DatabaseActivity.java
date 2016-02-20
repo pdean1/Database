@@ -25,13 +25,17 @@ public class DatabaseActivity extends AppCompatActivity {
     }
 
     public void newProduct(View v) {
-        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
-        Product p = new Product(etName.getText().toString(),
-                Integer.parseInt(etQuantity.getText().toString()));
-        dbHandler.addProduct(p);
-        idView.setText("Record Added!");
-        etName.setText("");
-        etQuantity.setText("");
+        try {
+            MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
+            Product p = new Product(etName.getText().toString(),
+                    Integer.parseInt(etQuantity.getText().toString()));
+            dbHandler.addProduct(p);
+            idView.setText("Record Added!");
+            etName.setText("");
+            etQuantity.setText("");
+        } catch (Exception e) {
+            idView.setText("Unable to add.\nTry again.");
+        }
     }
 
     public void lookupProduct(View v) {
@@ -53,7 +57,7 @@ public class DatabaseActivity extends AppCompatActivity {
             etName.setText("");
             etQuantity.setText("");
         } else {
-            idView.setText("No Match Found!");
+            idView.setText("No Match \nFound!");
         }
     }
 
@@ -65,10 +69,10 @@ public class DatabaseActivity extends AppCompatActivity {
             if (dbHandler.updateProduct(p)) {
                 idView.setText("Product updated!");
             } else {
-                idView.setText("No product found!");
+                idView.setText("No product \nfound!");
             }
         } catch (Exception e) {
-            idView.setText("Find a product first.");
+            idView.setText("Find a product \nfirst. Check \n all fields.");
         }
         etName.setText("");
         etQuantity.setText("");
@@ -77,7 +81,7 @@ public class DatabaseActivity extends AppCompatActivity {
     public void deleteAllProducts(View v) {
         MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
         dbHandler.deleteAllProducts();
-        idView.setText("All products deleted");
+        idView.setText("All products \ndeleted");
         etName.setText("");
         etQuantity.setText("");
     }
