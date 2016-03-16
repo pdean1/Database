@@ -19,6 +19,7 @@ public class DatabaseActivity extends AppCompatActivity {
     TextView            idView;
     EditText            etName;
     EditText            etQuantity;
+    ListView            lvProducts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,9 @@ public class DatabaseActivity extends AppCompatActivity {
         idView = (TextView) findViewById(R.id.tvID);
         etName = (EditText) findViewById(R.id.etName);
         etQuantity = (EditText) findViewById(R.id.etQuantity);
+        lvProducts = (ListView) findViewById(R.id.productList);
         dbHandler = new MyDBHandler(this, null, null, 1);
+        displayProductList();
     }
 
     public void newProduct(View v) {
@@ -38,6 +41,7 @@ public class DatabaseActivity extends AppCompatActivity {
             idView.setText("Record Added!");
             etName.setText("");
             etQuantity.setText("");
+            displayProductList();
         } catch (Exception e) {
             idView.setText("Unable to add.\nTry again.");
         }
@@ -59,6 +63,7 @@ public class DatabaseActivity extends AppCompatActivity {
             idView.setText("Record Deleted!");
             etName.setText("");
             etQuantity.setText("");
+            displayProductList();
         } else {
             idView.setText("No Match \nFound!");
         }
@@ -78,6 +83,7 @@ public class DatabaseActivity extends AppCompatActivity {
         }
         etName.setText("");
         etQuantity.setText("");
+        displayProductList();
     }
 
     public void deleteAllProducts(View v) {
@@ -85,38 +91,44 @@ public class DatabaseActivity extends AppCompatActivity {
         idView.setText("All products \ndeleted");
         etName.setText("");
         etQuantity.setText("");
+        lvProducts.setAdapter(null);
     }
 
     private void displayProductList() {
-        Cursor cursor = dbHandler.getAllProducts();
-        if (cursor == null)
+        try
         {
-            idView.setText("Unable to generate cursor.");
-            return;
+            Cursor cursor = dbHandler.getAllProducts();
+            if (cursor == null)
+            {
+                idView.setText("Unable to generate cursor.");
+                return;
+            }
+            if (cursor.getCount() == 0)
+            {
+                idView.setText("No Products in the Database.");
+                return;
+            }
+            String[] columns = new String[] {
+                    MyDBHandler.COLUMN_ID,
+                    MyDBHandler.COLUMN_PRODUCTNAME,
+                    MyDBHandler.COLUMN_QUANTITY
+            };
+            int[] boundTo = new int[] {
+                    R.id.pId,
+                    R.id.pName,
+                    R.id.pQuantity
+            };
+            simpleCursorAdapter = new SimpleCursorAdapter(this,
+                    R.layout.product_list,
+                    cursor,
+                    columns,
+                    boundTo,
+                    0);
+            lvProducts.setAdapter(simpleCursorAdapter);
         }
-        if (cursor.getCount() == 0)
+        catch (Exception ex)
         {
-            idView.setText("No Products in the Database.");
-            return;
+            idView.setText("There was an error!");
         }
-        String[] columns = new String[] {
-                MyDBHandler.COLUMN_ID,
-                MyDBHandler.COLUMN_PRODUCTNAME,
-                MyDBHandler.COLUMN_QUANTITY
-        };
-        int[] boundTo = new int[] {
-                R.id.pId,
-                R.id.pName,
-                R.id.pQuantity
-        };
-        simpleCursorAdapter = new SimpleCursorAdapter(this,
-                R.layout.product_list,
-                cursor,
-                columns,
-                boundTo,
-                0);
-        ListView lvProductsList = (ListView) findViewById(R.id.productList);
-        lvProductsList.setAdapter(simpleCursorAdapter);
-
     }
 }
