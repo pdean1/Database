@@ -1,9 +1,12 @@
 package com.ebookfrenzy.database;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.ebookfrenzy.database.model.Product;
@@ -11,9 +14,11 @@ import com.ebookfrenzy.database.model.dbaccess.MyDBHandler;
 
 public class DatabaseActivity extends AppCompatActivity {
 
-    TextView idView;
-    EditText etName;
-    EditText etQuantity;
+    MyDBHandler         dbHandler;
+    SimpleCursorAdapter simpleCursorAdapter;
+    TextView            idView;
+    EditText            etName;
+    EditText            etQuantity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,11 +27,11 @@ public class DatabaseActivity extends AppCompatActivity {
         idView = (TextView) findViewById(R.id.tvID);
         etName = (EditText) findViewById(R.id.etName);
         etQuantity = (EditText) findViewById(R.id.etQuantity);
+        dbHandler = new MyDBHandler(this, null, null, 1);
     }
 
     public void newProduct(View v) {
         try {
-            MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
             Product p = new Product(etName.getText().toString(),
                     Integer.parseInt(etQuantity.getText().toString()));
             dbHandler.addProduct(p);
@@ -39,7 +44,6 @@ public class DatabaseActivity extends AppCompatActivity {
     }
 
     public void lookupProduct(View v) {
-        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
         Product p = dbHandler.findProduct(etName.getText().toString());
         if (p == null)
         {
@@ -51,7 +55,6 @@ public class DatabaseActivity extends AppCompatActivity {
     }
 
     public void deleteProduct(View v) {
-        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
         if (dbHandler.deleteProduct(etName.getText().toString())) {
             idView.setText("Record Deleted!");
             etName.setText("");
@@ -62,7 +65,6 @@ public class DatabaseActivity extends AppCompatActivity {
     }
 
     public void updateProduct(View v) {
-        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
         try {
             Product p = new Product(Integer.parseInt(idView.getText().toString()),
                     etName.getText().toString(), Integer.parseInt(etQuantity.getText().toString()));
@@ -79,10 +81,42 @@ public class DatabaseActivity extends AppCompatActivity {
     }
 
     public void deleteAllProducts(View v) {
-        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
         dbHandler.deleteAllProducts();
         idView.setText("All products \ndeleted");
         etName.setText("");
         etQuantity.setText("");
+    }
+
+    private void displayProductList() {
+        Cursor cursor = dbHandler.getAllProducts();
+        if (cursor == null)
+        {
+            idView.setText("Unable to generate cursor.");
+            return;
+        }
+        if (cursor.getCount() == 0)
+        {
+            idView.setText("No Products in the Database.");
+            return;
+        }
+        String[] columns = new String[] {
+                MyDBHandler.COLUMN_ID,
+                MyDBHandler.COLUMN_PRODUCTNAME,
+                MyDBHandler.COLUMN_QUANTITY
+        };
+        int[] boundTo = new int[] {
+                R.id.pId,
+                R.id.pName,
+                R.id.pQuantity
+        };
+        simpleCursorAdapter = new SimpleCursorAdapter(this,
+                R.layout.product_list,
+                cursor,
+                columns,
+                boundTo,
+                0);
+        ListView lvProductsList = (ListView) findViewById(R.id.productList);
+        lvProductsList.setAdapter(simpleCursorAdapter);
+
     }
 }

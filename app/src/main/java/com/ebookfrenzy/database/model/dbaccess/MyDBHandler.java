@@ -67,6 +67,26 @@ public class MyDBHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * Gets all Products in the Database and returns a cursor of them.
+     * If there are no items in the database then the cursor returns null
+     *
+     * @return A Cursor of all products or null
+     */
+    public Cursor getAllProducts() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_PRODUCTS, new String[] {COLUMN_ID, COLUMN_PRODUCTNAME,
+                COLUMN_QUANTITY}, null, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            return cursor;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
      * Adds a product to the database
      * @param product the product to be added.
      */
